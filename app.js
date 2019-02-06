@@ -1,10 +1,20 @@
 // Requires
 var express = require('express');
 var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
+// Rutas
+//importar rutas: para importar dentro del require va la ruta de la carpeta
+var appRoutes = require('./routes/app');
+var UsuarioRoutes = require('./routes/usuario');
 
 // Inicializar Variables
 
 var app = express();
+
+//Confifuracion del BodyParser
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Conexión a MongoDB
 
@@ -16,18 +26,11 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitaldb', (error, res)
 
 });
 
-
-// Rutas
-/*Aqui se definen las peticiones que se harán con HTTP*/
-
-app.get('/', (request, response, next) => {
-
-    response.status(200).json({ /*Es importante estadarizar las respuetas */
-        ok: true,
-        mensaje: 'Peticion ejecutada de forma correcta'
-    });
-
-});
+//Middleware
+//cuando en la aplicacion se haga una peticion con la ruta se usara el appRoutes
+//hay que definir las demas rutas arriba de la raiz
+app.use('/usuario', UsuarioRoutes);
+app.use('/', appRoutes); //Raiz
 
 // Escuchar peticiones
 
