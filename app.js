@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 //importar rutas: para importar dentro del require va la ruta de la carpeta
 var appRoutes = require('./routes/app');
 var UsuarioRoutes = require('./routes/usuario');
+var loginRoutes = require('./routes/login');
 
 // Inicializar Variables
 
@@ -30,6 +31,7 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitaldb', (error, res)
 //cuando en la aplicacion se haga una peticion con la ruta se usara el appRoutes
 //hay que definir las demas rutas arriba de la raiz
 app.use('/usuario', UsuarioRoutes);
+app.use('/login', loginRoutes)
 app.use('/', appRoutes); //Raiz
 
 // Escuchar peticiones
