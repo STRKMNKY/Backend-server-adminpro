@@ -1,0 +1,1 @@
+module.exports.SEED = '@semilla@_difi%ci&l=adivinar';

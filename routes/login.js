@@ -1,6 +1,7 @@
 var express = require('express');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+var SEED = require('../config/config').SEED;
 
 var app = express();
 var Usuario = require('../models/usuario');
@@ -43,7 +44,7 @@ app.post('/', (request, response) => {
 
         //Crear el Token. Libreria necesaria npm install jsonwebtoken --save
 
-        var token = jwt.sign({ usuario: userLoged }, '@semilla@_difi%ci&l=adivinar', { expiresIn: 14400 }); //expira en 4 horas
+        var token = jwt.sign({ usuario: userLoged }, SEED, { expiresIn: 14400 }); //expira en 4 horas
 
         //Respuesta para creación exitosa
         response.status(201).json({

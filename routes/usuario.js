@@ -5,6 +5,12 @@ var app = express();
 var Usuario = require('../models/usuario');
 //Libreria para cifrado de una via (npm install bcryptsjs --save)
 var bcrypt = require('bcryptjs');
+//imports para token
+var jwt = require('jsonwebtoken');
+var mdAutenticacion = require('../middlewares/autenticacion').verificaToken;
+// liniea ya no necesaria var SEED = require('../config/config').SEED;
+
+
 /*Aqui se definen las peticiones que se harán con HTTP*/
 
 app.get('/', (request, response, next) => {
@@ -33,10 +39,36 @@ app.get('/', (request, response, next) => {
 
 });
 
+/*====================== 
+    Para optimizar este middleware se movio a autenticacion.js
+  ======================
+    // Validar token
+// Middleware: todas las peticiones debajo de este bloque de codigo requieren el token
+
+app.use('/', (request, response, next) => {
+
+    var token = request.query.token;
+
+    jwt.verify(token, SEED, (error, decoded) => {
+        if (error) {
+            return response.status(401).json({
+                ok: false,
+                mensaje: 'Token invalido',
+                error: error
+            });
+        }
+    });
+
+    next();
+
+});
+================================*/
+
 //Crear usuario
 
 //necesitaremos una libreria de node bdy-parser
-app.post('/', (request, response) => {
+//Para verificar el token mandamos a llamar a la funcion como parametro de la petición
+app.post('/', mdAutenticacion, (request, response) => {
 
     var body = request.body; //esto es lo que envia el usuario como datos
 
@@ -65,7 +97,8 @@ app.post('/', (request, response) => {
         response.status(201).json({
             ok: true,
             mensaje: 'Usuario creado exitosamente',
-            usuario: usuarioGuardado
+            usuario: usuarioGuardado,
+            usuarioToken: request.usuario
         });
 
     });
