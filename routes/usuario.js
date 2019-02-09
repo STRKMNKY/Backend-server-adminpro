@@ -111,7 +111,7 @@ app.post('/', mdAutenticacion, (request, response) => {
 });
 
 //Modificar usuario
-app.put('/:id', (request, response) => {
+app.put('/:id', mdAutenticacion, (request, response) => {
 
     var id = request.params.id; //guardar id de la ruta 
     var body = request.body;
@@ -160,7 +160,8 @@ app.put('/:id', (request, response) => {
             response.status(201).json({
                 ok: true,
                 mensaje: 'Datos del usuario actualizado exitosamente',
-                usuario: usuarioGuardado
+                usuario: usuarioGuardado,
+                usuarioToken: request.usuario
             });
         });
 
@@ -169,7 +170,7 @@ app.put('/:id', (request, response) => {
 });
 
 //Borrar usuario por ID
-app.delete('/:id', (request, response) => {
+app.delete('/:id', mdAutenticacion, (request, response) => {
 
     var id = request.params.id;
 
@@ -196,7 +197,8 @@ app.delete('/:id', (request, response) => {
         response.status(200).json({
             ok: true,
             usuario: usuarioBorrado,
-            message: 'Eliminación exitosa'
+            message: 'Eliminación exitosa',
+            usuarioToken: request.usuario
         });
     })
 

@@ -21,8 +21,6 @@ exports.verificaToken = function(request, response, next) {
         request.usuario = decoded.usuario;
     });
 
-
-
     next();
 
 }
