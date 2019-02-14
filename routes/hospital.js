@@ -9,8 +9,12 @@ var Hospital = require('../models/hospital');
 var app = express();
 
 app.get('/', (request, response) => {
-
+    var desde = request.query.desde || 0;
+    desde = Number(desde);
     Hospital.find({}, 'nombre img usuario')
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email') // Trae los campos de las otras colecciones que tienen relacion 
         .exec((error, collection) => {
 
             if (error) {
@@ -20,10 +24,16 @@ app.get('/', (request, response) => {
                     error: error
                 });
             }
-            response.status(200).json({
-                ok: true,
-                mensaje: 'Coleccion encontrada',
-                hospitales: collection
+
+            Hospital.count({}, (error, conteo) => {
+
+                response.status(200).json({
+                    ok: true,
+                    mensaje: 'Coleccion encontrada',
+                    hospitales: collection,
+                    total_registros: conteo
+                });
+
             });
 
         });

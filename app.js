@@ -9,7 +9,8 @@ var UsuarioRoutes = require('./routes/usuario');
 var loginRoutes = require('./routes/login');
 var hospitalRoutes = require('./routes/hospital');
 var medicoRoutes = require('./routes/medico');
-
+var busquedaRoutes = require('./routes/busqueda');
+var uploadRoutes = require('./routes/upload');
 // Inicializar Variables
 
 var app = express();
@@ -33,9 +34,11 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitaldb', (error, res)
 //cuando en la aplicacion se haga una peticion con la ruta se usara el appRoutes
 //hay que definir las demas rutas arriba de la raiz
 app.use('/usuario', UsuarioRoutes);
-app.use('/login', loginRoutes);
 app.use('/hospital', hospitalRoutes);
 app.use('/medico', medicoRoutes);
+app.use('/login', loginRoutes);
+app.use('/busqueda', busquedaRoutes);
+app.use('/upload', uploadRoutes);
 app.use('/', appRoutes); //Raiz
 
 // Escuchar peticiones

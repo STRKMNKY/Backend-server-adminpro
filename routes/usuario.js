@@ -14,8 +14,12 @@ var mdAutenticacion = require('../middlewares/autenticacion').verificaToken;
 /*Aqui se definen las peticiones que se harán con HTTP*/
 
 app.get('/', (request, response, next) => {
+    var desde = request.query.desde || 0;
+    desde = Number(desde);
     //Obtener usuarios de mongo 
     Usuario.find({}, 'nombre email img role') //seleccion de campos a pedir
+        .skip(desde) //Apartir del numero en adelante
+        .limit(5) // sirve para paginar reduce la cantidad de resultados = al paramtro enviado
         .exec(
             (error, collection) => {
                 if (error) {
@@ -27,11 +31,16 @@ app.get('/', (request, response, next) => {
                     });
                 }
 
-                response.status(200).json({
-                    /*Es importante estadarizar las respuetas */
-                    ok: true,
-                    mensaje: 'Peticion ejecutada de forma correcta para usuarios',
-                    usuarios: collection
+                Usuario.count({}, (error, conteo) => {
+
+                    response.status(200).json({
+                        /*Es importante estadarizar las respuetas */
+                        ok: true,
+                        mensaje: 'Peticion ejecutada de forma correcta para usuarios',
+                        usuarios: collection,
+                        totalRegistros: conteo
+                    });
+
                 });
 
             });

@@ -8,8 +8,13 @@ var Medico = require('../models/medico');
 var app = express();
 
 app.get('/', (request, response) => {
-
+    var desde = request.query.desde;
+    desde = Number(desde);
     Medico.find({})
+        .skip(desde)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .populate('hospital')
         .exec((error, collection) => {
             if (error) {
                 return response.status(500).json({
@@ -19,10 +24,16 @@ app.get('/', (request, response) => {
                 });
             }
 
-            response.status(200).json({
-                ok: true,
-                mensaje: 'Coleccion cargada exitosamente',
-                medicos: collection
+            Medico.count({}, (error, conteo) => {
+
+                response.status(200).json({
+                    ok: true,
+                    mensaje: 'Coleccion cargada exitosamente',
+                    medicos: collection,
+                    total_registros: conteo
+                });
+
+
             });
 
         });
