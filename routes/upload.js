@@ -5,11 +5,14 @@ var app = express();
 //fielupload import
 var fileUpload = require('express-fileupload');
 var fs = require('fs');
+util = require('util');
 //Para subir archivos usaremos la libreria express-fileupload
 //Documentacion de la libreria :https://github.com/richardgirges/express-fileupload
 //npm install --save express-fileupload
 
-app.use(fileUpload());
+app.use(fileUpload({
+    createParentPath: true
+}));
 
 app.put('/:tipo/:id', (request, response) => {
 
@@ -69,23 +72,60 @@ app.put('/:tipo/:id', (request, response) => {
     //Mover archivo del temeporal a un path
     var path = `./uploads/${ tipo }/${ nombre }`;
 
-    archivo.mv(path, (error) => {
-        if (error) {
-            return response.status(500).json({
-                /*Es importante estadarizar las respuetas */
-                ok: false,
-                mensaje: 'error al mover archivo',
-                errors: error
-            });
-        }
+    try {
 
-        response.status(200).json({ /*Es importante estadarizar las respuetas */
+        //Metodo bueno para mover archivos
+        fs.createReadStream(archivo.tempFilePath)
+        fs.createWriteStream(path);
+
+        return response.status(200).json({
             ok: true,
-            mensaje: 'Archivo movido'
+            mensaje: 'Archivo subido exitosamente',
+            ruta: path
         });
 
-    });
+    } catch {
 
+        return response.status(500).json({
+            ok: false,
+            mensaje: 'error al mover archivo',
+        });
+
+    }
+
+    /* fs.rename(archivo.tempFilePath, path, error => {
+         if (error) {
+             return response.status(500).json({
+                 ok: false,
+                 mensaje: 'error al mover archivo',
+                 errors: error
+             });
+         }
+
+         response.status(200).json({
+             ok: true,
+             mensaje: 'Archivo movido'
+         });
+
+     });*/
+    /*
+        archivo.mv(path, (error) => {
+            if (error) {
+                return response.status(500).json({
+                    ok: false,
+                    mensaje: 'error al mover archivo',
+                    errors: error,
+                    archivo: archivo
+                });
+            }
+
+            response.status(200).json({
+                ok: true,
+                mensaje: 'Archivo movido'
+            });
+
+        });
+    */
 });
 
 //exportar
